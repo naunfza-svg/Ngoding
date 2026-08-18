@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Flower For You 💜</title>
+    <!-- Menggunakan font Quicksand dari Google Fonts untuk tampilan yang cute dan rounded -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === VARIABEL WARNA & PENGATURAN DASAR === */
+        :root {
+            --bg-gradient-1: #f3e5f5;
+            --bg-gradient-2: #e1bee7;
+            --petal-color-1: #ce93d8;
+            --petal-color-2: #ab47bc;
+            --stem-color: #81c784;
+            --leaf-color: #66bb6a;
+            --text-color: #4a148c;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2));
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden; /* Mencegah scroll saat ada confetti */
+            position: relative;
+        }
+
+        /* === ELEMEN LATAR BELAKANG (Bintang & Kupu-kupu) === */
+        .background-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        .butterfly {
+            position: absolute;
+            font-size: 24px;
+            animation: fly 15s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        @keyframes fly {
+            0% { transform: translate(-100px, 100px) rotate(15deg); }
+            25% { transform: translate(25vw, -50px) rotate(-10deg); }
+            50% { transform: translate(50vw, 150px) rotate(15deg); }
+            75% { transform: translate(75vw, -20px) rotate(-10deg); }
+            100% { transform: translate(110vw, 100px) rotate(15deg); }
+        }
+
+        /* === KONTENER UTAMA BUNGA === */
+        .scene {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .flower-wrapper {
+            position: relative;
+            width: 200px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            animation: float 4s ease-in-out infinite; /* Efek floating lembut */
+            cursor: pointer;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* === BAGIAN-BAGIAN BUNGA === */
+        .stem {
+            width: 8px;
+            height: 150px;
+            background: linear-gradient(to top, var(--leaf-color), var(--stem-color));
+            border-radius: 10px;
+            transform-origin: bottom center;
+            transform: scaleY(0);
+            animation: growStem 2s ease-out forwards;
+            position: relative;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 40px;
+            height: 25px;
+            background: var(--leaf-color);
+            border-radius: 0 50% 0 50%;
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        .leaf.left {
+            left: -40px;
+            top: 50px;
+            transform-origin: right bottom;
+            animation: growLeaf 1s ease-out 1.5s forwards;
+        }
+
+        .leaf.right {
+            right: -40px;
+            top: 80px;
+            border-radius: 50% 0 50% 0;
+            transform-origin: left bottom;
+            animation: growLeaf 1s ease-out 1.8s forwards;
+        }
+
+        .flower-head {
+            position: absolute;
+            top: 30px;
+            width: 0;
+            height: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Efek saat kursor menyentuh bunga */
+        .flower-wrapper:hover .flower-head {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .petal {
+            position: absolute;
+            width: 50px;
+            height: 90px;
+            background: linear-gradient(to bottom, var(--petal-color-1), var(--petal-color-2));
+            border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+            transform-origin: bottom center;
+            bottom: -10px;
+            opacity: 0;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Mengatur posisi 8 kelopak bunga */
+        .petal:nth-child(1) { --rot: 0deg; }
+        .petal:nth-child(2) { --rot: 45deg; }
+        .petal:nth-child(3) { --rot: 90deg; }
+        .petal:nth-child(4) { --rot: 135deg; }
+        .petal:nth-child(5) { --rot: 180deg; }
+        .petal:nth-child(6) { --rot: 225deg; }
+        .petal:nth-child(7) { --rot: 270deg; }
+        .petal:nth-child(8) { --rot: 315deg; }
+
+        .petal {
+            animation: openPetal 1.5s ease-out forwards;
+        }
+        
+        /* Delay untuk masing-masing kelopak agar terbuka satu per satu */
+        .petal:nth-child(1) { animation-delay: 2.0s; }
+        .petal:nth-child(2) { animation-delay: 2.2s; }
+        .petal:nth-child(3) { animation-delay: 2.4s; }
+        .petal:nth-child(4) { animation-delay: 2.6s; }
+        .petal:nth-child(5) { animation-delay: 2.8s; }
+        .petal:nth-child(6) { animation-delay: 3.0s; }
+        .petal:nth-child(7) { animation-delay: 3.2s; }
+        .petal:nth-child(8) { animation-delay: 3.4s; }
+
+        .flower-center {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: radial-gradient(circle, #fff9c4, #fbc02d);
+            border-radius: 50%;
+            z-index: 10;
+            transform: scale(0);
+            animation: popCenter 0.5s ease-out 3.6s forwards;
+            box-shadow: 0 0 15px rgba(251, 192, 45, 0.6);
+        }
+
+        /* === KEYFRAMES ANIMASI BUNGA === */
+        @keyframes growStem {
+            0% { transform: scaleY(0); }
+            100% { transform: scaleY(1); }
+        }
+
+        @keyframes growLeaf {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes openPetal {
+            0% { transform: scale(0) rotate(var(--rot)); opacity: 0; }
+            100% { transform: scale(1) rotate(var(--rot)); opacity: 0.9; }
+        }
+
+        @keyframes popCenter {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* === KARTU & GLASSMORPHISM === */
+        .card {
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 24px;
+            padding: 30px 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(106, 27, 154, 0.1);
+            margin-top: 40px;
+            max-width: 85%;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .card p {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            text-shadow: 0 2px 5px rgba(255,255,255,0.8);
+            transition: opacity 0.3s;
+        }
+
+        /* === TOMBOL === */
+        button {
+            background: linear-gradient(135deg, #ba68c8, #9c27b0);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.6);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* === EFEK SPARKLE & CONFETTI (Dibuat via JS) === */
+        .sparkle-hover {
+            position: absolute;
+            pointer-events: none;
+            font-size: 14px;
+            animation: floatUpFade 1s ease-out forwards;
+        }
+
+        .confetti {
+            position: absolute;
+            top: -50px;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 100;
+            animation: fall linear forwards;
+        }
+
+        @keyframes floatUpFade {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-40px) scale(1.2); opacity: 0; }
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* === RESPONSIVE (HP) === */
+        @media (max-width: 480px) {
+            .flower-wrapper { transform: scale(0.8); }
+            @keyframes float {
+                0%, 100% { transform: translateY(0) scale(0.8); }
+                50% { transform: translateY(-10px) scale(0.8); }
+            }
+            .card { padding: 25px 20px; }
+            .card p { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Container untuk elemen background seperti bintang & kupu-kupu -->
+    <div class="background-elements" id="bg-elements"></div>
+
+    <div class="scene">
+        <!-- Bunga yang dibuat murni dengan CSS -->
+        <div class="flower-wrapper" id="flower">
+            <div class="stem">
+                <div class="leaf left"></div>
+                <div class="leaf right"></div>
+            </div>
+            <div class="flower-head">
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="flower-center"></div>
+            </div>
+        </div>
+
+        <!-- Kartu Pesan -->
+        <div class="card" id="message-card">
+            <p id="message-text">A little flower for you 💜</p>
+            <button id="surprise-btn">Klik bunganya 🌷</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Membuat efek kelap-kelip bintang di background
+        const bgContainer = document.getElementById('bg-elements');
+        for (let i = 0; i < 30; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            // Posisi acak
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            // Ukuran acak
+            let size = Math.random() * 4 + 2;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            // Durasi animasi acak
+            star.style.animationDelay = Math.random() * 3 + 's';
+            bgContainer.appendChild(star);
+        }
+
+        // 2. Membuat kupu-kupu pastel terbang melayang
+        const butterflies = ['🦋', '✨', '🦋']; 
+        for (let i = 0; i < 3; i++) {
+            let bf = document.createElement('div');
+            bf.className = 'butterfly';
+            bf.innerHTML = butterflies[i];
+            bf.style.top = (Math.random() * 50 + 10) + 'vh';
+            bf.style.animationDelay = (Math.random() * 5) + 's';
+            bf.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            bgContainer.appendChild(bf);
+        }
+
+        // 3. Efek Sparkle saat hover pada bunga
+        const flower = document.getElementById('flower');
+        flower.addEventListener('mousemove', (e) => {
+            // Batasi agar tidak terlalu banyak elemen dibuat (randomizer)
+            if (Math.random() > 0.8) {
+                let sparkle = document.createElement('div');
+                sparkle.innerHTML = '✨';
+                sparkle.className = 'sparkle-hover';
+                // Posisi sesuai kursor relatif terhadap layar
+                sparkle.style.left = (e.pageX - 10) + 'px';
+                sparkle.style.top = (e.pageY - 10) + 'px';
+                document.body.appendChild(sparkle);
+                
+                // Hapus elemen setelah animasi selesai (1 detik)
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1000);
+            }
+        });
+
+        // 4. Interaksi Tombol (Surprise!)
+        const btn = document.getElementById('surprise-btn');
+        const messageText = document.getElementById('message-text');
+
+        btn.addEventListener('click', () => {
+            // Mengubah teks secara halus
+            messageText.style.opacity = 0;
+            setTimeout(() => {
+                messageText.innerHTML = "Semoga harimu seindah bunga ini 💜✨";
+                messageText.style.opacity = 1;
+            }, 300);
+
+            // Sembunyikan tombol setelah diklik agar lebih rapi
+            btn.style.display = 'none';
+
+            // Menjalankan fungsi hujan confetti
+            createConfetti();
+        });
+
+        // 5. Fungsi Hujan Confetti Hati & Bunga
+        function createConfetti() {
+            const symbols = ['💜', '🌸', '✨', '💖', '🌷'];
+            const confettiCount = 60;
+
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    let conf = document.createElement('div');
+                    conf.className = 'confetti';
+                    // Pilih simbol secara acak
+                    conf.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+                    // Posisi awal acak secara horizontal
+                    conf.style.left = Math.random() * 100 + 'vw';
+                    // Ukuran acak
+                    conf.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                    // Kecepatan jatuh acak
+                    conf.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                    
+                    document.body.appendChild(conf);
+
+                    // Hapus dari DOM setelah jatuh
+                    setTimeout(() => {
+                        conf.remove();
+                    }, 6000);
+                }, i * 50); // Delay tiap confetti agar hujannya natural
+            }
+        }
+    </script>
+</body>
+</html>
